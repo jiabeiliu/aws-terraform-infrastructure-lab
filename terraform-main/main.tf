@@ -2,6 +2,11 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "database_password" {
+  type      = string
+  sensitive = true
+}
+
 # Core Networking Module: VPC, Subnets, Internet Gateway, Routing
 module "network_stack" {
   source = "./modules/network"
@@ -20,6 +25,7 @@ module "mysql_database" {
   private_subnet_ids = module.network_stack.private_subnet_ids
   db_sg_id           = module.firewall_rules.rds_sg_id
   app_sg_id          = module.firewall_rules.ec2_sg_id
+  password           = var.database_password
 }
 
 # Application Layer Module: EC2 deployment in public subnets
@@ -30,7 +36,6 @@ module "application_layer" {
   database_host   = module.mysql_database.db_endpoint
   database_port   = module.mysql_database.db_port
   database_user   = module.mysql_database.username
-  database_pass   = module.mysql_database.password
   database_name   = module.mysql_database.db_name
 }
 

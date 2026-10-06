@@ -6,7 +6,7 @@ resource "aws_db_instance" "main" {
 
   db_name           = "appdb"
   username          = "adminuser"
-  password          = "securepass123"
+  password          = var.password
   port              = 3306
 
   vpc_security_group_ids = [var.db_sg_id]
@@ -36,10 +36,11 @@ output "username" {
   value = aws_db_instance.main.username
 }
 
-output "password" {
-  value = aws_db_instance.main.password
-}
-
 output "db_name" {
   value = aws_db_instance.main.db_name
+}
+
+variable "password" {
+  type      = string
+  sensitive = true
 }
